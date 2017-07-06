@@ -16,12 +16,6 @@
 
 package org.springframework.cloud.config.server.environment;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
@@ -43,9 +37,6 @@ import org.eclipse.jgit.errors.NoRemoteRepositoryException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.FetchResult;
-import org.eclipse.jgit.transport.JschConfigSessionFactory;
-import org.eclipse.jgit.transport.OpenSshConfig.Host;
-import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.TagOpt;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.util.FileUtils;
@@ -56,7 +47,11 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import com.jcraft.jsch.Session;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.springframework.util.StringUtils.hasText;
 
@@ -80,8 +75,6 @@ public class JGitEnvironmentRepository extends AbstractScmEnvironmentRepository
 	 * 5 seconds.
 	 */
 	private int timeout = 5;
-
-	private boolean initialized;
 
 	/**
 	 * Flag to indicate that the repository should be cloned on startup (not on demand).
@@ -177,7 +170,6 @@ public class JGitEnvironmentRepository extends AbstractScmEnvironmentRepository
 	public void afterPropertiesSet() throws Exception {
 		Assert.state(getUri() != null,
 				"You need to configure a uri for the git repository");
-		initialize();
 		if (this.cloneOnStart) {
 			initClonedRepository();
 		}
@@ -187,7 +179,6 @@ public class JGitEnvironmentRepository extends AbstractScmEnvironmentRepository
 	 * Get the working directory ready.
 	 */
 	public String refresh(String label) {
-		initialize();
 		Git git = null;
 		try {
 			git = createGitClient();
@@ -451,19 +442,6 @@ public class JGitEnvironmentRepository extends AbstractScmEnvironmentRepository
 							e);
 				}
 			}
-		}
-	}
-
-	private void initialize() {
-		if (!this.initialized) {
-			SshSessionFactory.setInstance(new JschConfigSessionFactory() {
-				@Override
-				protected void configure(Host hc, Session session) {
-					session.setConfig("StrictHostKeyChecking",
-							isStrictHostKeyChecking() ? "yes" : "no");
-				}
-			});
-			this.initialized = true;
 		}
 	}
 

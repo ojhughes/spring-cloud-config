@@ -69,6 +69,7 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.util.FS;
 import org.eclipse.jgit.util.FileUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -675,38 +676,6 @@ public class JGitEnvironmentRepositoryTests {
 
 		assertTrue(mockCloneCommand.getCredentialsProvider() instanceof AwsCodeCommitCredentialProvider);
 
-	}
-
-	@Test
-	public void strictHostKeyCheckShouldCheck() throws Exception {
-		String uri = "git+ssh://git@somegitserver/somegitrepo";
-		SshSessionFactory.setInstance(null);
-		JGitEnvironmentRepository envRepository = new JGitEnvironmentRepository(this.environment);
-		envRepository.setUri(uri);
-		envRepository.setBasedir(new File("./mybasedir"));
-		assertTrue(envRepository.isStrictHostKeyChecking());
-		envRepository.setCloneOnStart(true);
-		try {
-			// this will throw but we don't care about connecting.
-			envRepository.afterPropertiesSet();
-		} catch (Exception e) {
-			final OpenSshConfig.Host hc = OpenSshConfig.get(FS.detect()).lookup("github.com");
-			JschConfigSessionFactory factory = (JschConfigSessionFactory) SshSessionFactory.getInstance();
-			// There's no public method that can be used to inspect the ssh
-			// configuration, so we'll reflect
-			// the configure method to allow us to check that the config
-			// property is set as expected.
-			Method configure = factory.getClass().getDeclaredMethod("configure", OpenSshConfig.Host.class,
-					Session.class);
-			configure.setAccessible(true);
-			Session session = mock(Session.class);
-			ArgumentCaptor<String> keyCaptor = ArgumentCaptor.forClass(String.class);
-			ArgumentCaptor<String> valueCaptor = ArgumentCaptor.forClass(String.class);
-			configure.invoke(factory, hc, session);
-			verify(session).setConfig(keyCaptor.capture(), valueCaptor.capture());
-			configure.setAccessible(false);
-			assertTrue("yes".equals(valueCaptor.getValue()));
-		}
 	}
 
 	@Test
