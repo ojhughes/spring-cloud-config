@@ -69,8 +69,13 @@ public class SshPropertyValidatorTest {
 				.hostKeyAlgorithm("ssh-rsa")
 				.build();
 
-		SshPropertyValidator sshPropertyValidator = new SshPropertyValidator(validSettings);
+		SshPropertyValidator sshPropertyValidator = spy(new SshPropertyValidator(validSettings));
 		sshPropertyValidator.validateSshConfigurationProperties();
+		verify(sshPropertyValidator, times(1)).validatePrivateKeyFormat();
+		verify(sshPropertyValidator, times(1)).validateAlgorithmSpecifiedWhenHostKeySet();
+		verify(sshPropertyValidator, times(1)).validatePrivateKeyPresent();
+		verify(sshPropertyValidator, times(1)).validateHostKeyAlgorithmSupported();
+		verify(sshPropertyValidator, times(1)).validateHostKeySpecifiedWhenAlgorithmSet();
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -84,6 +89,7 @@ public class SshPropertyValidatorTest {
 
 		SshPropertyValidator sshPropertyValidator = new SshPropertyValidator(invalidKey);
 		sshPropertyValidator.validateSshConfigurationProperties();
+
 	}
 
 	@Test(expected = IllegalStateException.class)

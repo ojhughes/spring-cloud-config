@@ -19,7 +19,6 @@ package org.springframework.cloud.config.server.ssh;
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.junit.After;
 import org.junit.Test;
-import org.springframework.mock.env.MockEnvironment;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -73,7 +73,7 @@ public class SshPropertyValidator {
 		}
 	}
 
-	void validatePrivateKeyFormat() {
+	protected void validatePrivateKeyFormat() {
 		try {
 			KeyPair.load(jsch, sshUriProperties.getPrivateKey().getBytes(), null);
 		} catch (JSchException e) {
@@ -81,26 +81,26 @@ public class SshPropertyValidator {
 		}
 	}
 
-	void validateHostKeyAlgorithmSupported() {
+	protected void validateHostKeyAlgorithmSupported() {
 		if (hasText(sshUriProperties.getHostKeyAlgorithm())) {
 			Assert.state(VALID_HOST_KEY_ALGORITHMS.contains(sshUriProperties.getHostKeyAlgorithm()),
 					format("Property '%shostKeyAlgorithm' must be one of %s", GIT_PROPERTY_PREFIX, VALID_HOST_KEY_ALGORITHMS));
 		}
 	}
 
-	void validatePrivateKeyPresent() {
+	protected void validatePrivateKeyPresent() {
 		Assert.state(sshUriProperties.getPrivateKey() != null,
 				format("Property '%sprivateKey' must be set when '%signoreLocalSshSettings' is set to 'true'", GIT_PROPERTY_PREFIX, GIT_PROPERTY_PREFIX));
 	}
 
-	void validateHostKeySpecifiedWhenAlgorithmSet() {
+	protected void validateHostKeySpecifiedWhenAlgorithmSet() {
 		if (hasText(sshUriProperties.getHostKeyAlgorithm())) {
 			Assert.state(hasText(sshUriProperties.getHostKey()),
 					format("Property '%shostKey' must be set when 'hostKeyAlgorithm' is specified", GIT_PROPERTY_PREFIX));
 		}
 	}
 
-	void validateAlgorithmSpecifiedWhenHostKeySet() {
+	protected void validateAlgorithmSpecifiedWhenHostKeySet() {
 		if (hasText(sshUriProperties.getHostKey())) {
 			Assert.state(hasText(sshUriProperties.getHostKeyAlgorithm()),
 					format("Property '%shostKeyAlgorithm' must be set when 'hostKey' is specified", GIT_PROPERTY_PREFIX));
