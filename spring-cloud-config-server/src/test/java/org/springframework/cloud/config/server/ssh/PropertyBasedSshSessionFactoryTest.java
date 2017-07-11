@@ -34,7 +34,10 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for property based SSH config processor
@@ -125,7 +128,7 @@ public class PropertyBasedSshSessionFactoryTest {
 
 		factory.createSession(hc, null, sshKey.getHostname(), 22, null);
 		ArgumentCaptor<HostKey> captor = ArgumentCaptor.forClass(HostKey.class);
-		verify(hostKeyRepository).add(captor.capture(), Mockito.any(UserInfo.class));
+		verify(hostKeyRepository).add(captor.capture(), any(UserInfo.class));
 		HostKey hostKey = captor.getValue();
 		Assert.assertEquals("gitlab.example.local", hostKey.getHost());
 		Assert.assertEquals(HOST_KEY, hostKey.getKey());

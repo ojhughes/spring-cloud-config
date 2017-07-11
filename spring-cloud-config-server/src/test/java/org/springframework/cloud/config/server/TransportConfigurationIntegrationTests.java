@@ -28,7 +28,6 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.config.server.config.TransportConfiguration;
-import org.springframework.cloud.config.server.environment.JGitEnvironmentRepository;
 import org.springframework.cloud.config.server.environment.MultipleJGitEnvironmentRepository;
 import org.springframework.cloud.config.server.ssh.SshPropertyValidator;
 import org.springframework.cloud.config.server.ssh.SshUriProperties;
@@ -170,8 +169,8 @@ public class TransportConfigurationIntegrationTests {
 		}
 	}
 
-	static class TestProperties {
-		static final String TEST_PRIVATE_KEY_1 = "-----BEGIN RSA PRIVATE KEY-----\n" +
+	private static class TestProperties {
+		private static final String TEST_PRIVATE_KEY_1 = "-----BEGIN RSA PRIVATE KEY-----\n" +
 				"MIIEpAIBAAKCAQEAoqyz6YaYMTr7L8GLPSQpAQXaM04gRx4CCsGK2kfLQdw4BlqI\n" +
 				"yyxp38YcuZG9cUDBAxby+K2TKmwHaC1R61QTwbPuCRdIPrDwRz+FLoegm3iDLCmn\n" +
 				"uP6rjZDneYsqfU1KSdrOwIbCnONfDdvYL/vnZC/o8DDMlk5Orw2SfHkT3pq0o8km\n" +
@@ -199,7 +198,7 @@ public class TransportConfigurationIntegrationTests {
 				"2U7EeNwxq1I1L3Ag6E7wH4BHLHd4TKaZR6agFkn8oomz71yZPGjuZQ==\n" +
 				"-----END RSA PRIVATE KEY-----";
 
-		static final String TEST_PRIVATE_KEY_2 = "-----BEGIN RSA PRIVATE KEY-----\n" +
+		private static final String TEST_PRIVATE_KEY_2 = "-----BEGIN RSA PRIVATE KEY-----\n" +
 				"MIIEpgIBAAKCAQEAx4UbaDzY5xjW6hc9jwN0mX33XpTDVW9WqHp5AKaRbtAC3DqX\n" +
 				"IXFMPgw3K45jxRb93f8tv9vL3rD9CUG1Gv4FM+o7ds7FRES5RTjv2RT/JVNJCoqF\n" +
 				"ol8+ngLqRZCyBtQN7zYByWMRirPGoDUqdPYrj2yq+ObBBNhg5N+hOwKjjpzdj2Ud\n" +
