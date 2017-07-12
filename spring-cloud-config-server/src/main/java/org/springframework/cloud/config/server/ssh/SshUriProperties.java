@@ -16,6 +16,7 @@
 package org.springframework.cloud.config.server.ssh;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
@@ -28,11 +29,15 @@ import java.util.Objects;
  * @author Ollie Hughes
  */
 @ConfigurationProperties("spring.cloud.config.server.git")
+@Validated
+@PrivateKeyIsValid
+@HostKeyAndAlgoBothExist
+@HostKeyAlgoSupported
 public class SshUriProperties {
+	private String privateKey;
 	private String uri;
 	private String hostKeyAlgorithm;
 	private String hostKey;
-	private String privateKey;
 	private String username;
 	private String password;
 	private boolean ignoreLocalSshSettings;
@@ -57,28 +62,6 @@ public class SshUriProperties {
 
 	public static SshUriPropertiesBuilder builder() {
 		return new SshUriPropertiesBuilder();
-	}
-
-	public boolean isSshUri() {
-		return uri != null && !uri.startsWith("http");
-	}
-
-	public String getHostname() {
-		if (getUri() == null) {
-			return null;
-		}
-
-		if (getUri().matches("^[a-z]+://.*")) {
-			return UriComponentsBuilder.fromUriString(uri).build().getHost();
-		}
-		else if (getUri().indexOf('@') < getUri().indexOf(':')) {
-			return getUri().substring(getUri().indexOf('@') + 1, uri.indexOf(':'));
-		}
-		else if (getUri().startsWith("ssh:") && getUri().indexOf('@') > 0) {
-			String postAt = getUri().substring(getUri().indexOf('@') + 1);
-			return postAt.substring(0, postAt.indexOf(":"));
-		}
-		else return null;
 	}
 
 	public String getUri() {
@@ -153,28 +136,8 @@ public class SshUriProperties {
 		this.repos = repos;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(uri, hostKeyAlgorithm, hostKey, privateKey, username, password, ignoreLocalSshSettings, strictHostKeyChecking);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null || getClass() != obj.getClass()) {
-			return false;
-		}
-		final SshUriProperties other = (SshUriProperties) obj;
-		return Objects.equals(this.uri, other.uri)
-				&& Objects.equals(this.hostKeyAlgorithm, other.hostKeyAlgorithm)
-				&& Objects.equals(this.hostKey, other.hostKey)
-				&& Objects.equals(this.privateKey, other.privateKey)
-				&& Objects.equals(this.username, other.username)
-				&& Objects.equals(this.password, other.password)
-				&& Objects.equals(this.ignoreLocalSshSettings, other.ignoreLocalSshSettings)
-				&& Objects.equals(this.strictHostKeyChecking, other.strictHostKeyChecking);
+	public void addRepo(String repoName, SshUriProperties properties) {
+		this.repos.put(repoName, properties);
 	}
 
 	public String toString() {

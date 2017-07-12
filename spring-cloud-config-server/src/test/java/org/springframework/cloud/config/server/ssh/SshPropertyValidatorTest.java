@@ -59,127 +59,127 @@ public class SshPropertyValidatorTest {
 
 	private static final String VALID_HOST_KEY = "AAAAB3NzaC1yc2EAAAADAQABAAABAQDg6/W/5cbk/npvzpae7ZEa54F4rkwh2V3NiuqVZ5hWr+8O4/6SmrS7yBvRHAFeAJNb0LOCjE/7tjd1fqUx+QU1ATCtwkOhuwG8Ubzkx23mMZlrwEvx7XEfBoLN7Lw9fXjWDtTTgFB1AxCQ2pGGiNG0QCwyA4HViDHVU+ibwkRlzuDJG0tnp5Qpo3DXkHwFNdqWNfVrIZ6q2xbyeoJjKjnR215T0ehmuWFmKqG+uMNe/LQ6IOiK0F5+gr7rgPxNLAYYqyhraAnBeHn5gapsSzYJmFpoAHWvN7OUwHcJ88D9qUkKi4VKxYiuK69u3z825Xj2cLTfj9JiHCfV8cTo9GL";
 
-	@Test
-	public void supportedParametersSuccesful() throws Exception {
-		SshUriProperties validSettings = SshUriProperties.builder()
-				.uri(SSH_URI)
-				.ignoreLocalSshSettings(true)
-				.privateKey(VALID_PRIVATE_KEY)
-				.hostKey(VALID_HOST_KEY)
-				.hostKeyAlgorithm("ssh-rsa")
-				.build();
-
-		SshPropertyValidator sshPropertyValidator = spy(new SshPropertyValidator(validSettings));
-		sshPropertyValidator.validateSshConfigurationProperties();
-		verify(sshPropertyValidator, times(1)).validatePrivateKeyFormat();
-		verify(sshPropertyValidator, times(1)).validateAlgorithmSpecifiedWhenHostKeySet();
-		verify(sshPropertyValidator, times(1)).validatePrivateKeyPresent();
-		verify(sshPropertyValidator, times(1)).validateHostKeyAlgorithmSupported();
-		verify(sshPropertyValidator, times(1)).validateHostKeySpecifiedWhenAlgorithmSet();
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void invalidPrivateKeyFails() throws Exception {
-
-		SshUriProperties invalidKey = SshUriProperties.builder()
-				.uri(SSH_URI)
-				.ignoreLocalSshSettings(true)
-				.privateKey("invalid_key")
-				.build();
-
-		SshPropertyValidator sshPropertyValidator = new SshPropertyValidator(invalidKey);
-		sshPropertyValidator.validateSshConfigurationProperties();
-
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void missingPrivateKeyFails() throws Exception {
-
-		SshUriProperties missingKey = SshUriProperties.builder()
-				.uri(SSH_URI)
-				.ignoreLocalSshSettings(true)
-				.build();
-
-		SshPropertyValidator sshPropertyValidator = new SshPropertyValidator(missingKey);
-		sshPropertyValidator.validateSshConfigurationProperties();
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void hostKeyWithMissingAlgoFails() throws Exception {
-
-		SshUriProperties missingAlgo = SshUriProperties.builder()
-				.uri(SSH_URI)
-				.ignoreLocalSshSettings(true)
-				.privateKey("invalid_key")
-				.hostKey("some_host")
-				.build();
-
-		SshPropertyValidator sshPropertyValidator = new SshPropertyValidator(missingAlgo);
-		sshPropertyValidator.validateSshConfigurationProperties();
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void algoWithMissingHostKeyFails() throws Exception {
-
-		SshUriProperties missingHostKey = SshUriProperties.builder()
-				.uri(SSH_URI)
-				.ignoreLocalSshSettings(true)
-				.privateKey("invalid_key")
-				.hostKeyAlgorithm("some_host_algo")
-				.build();
-
-		SshPropertyValidator sshPropertyValidator = new SshPropertyValidator(missingHostKey);
-		sshPropertyValidator.validateSshConfigurationProperties();
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void unsupportedAlgoFails() throws Exception {
-
-		SshUriProperties unsupportedAlgo = SshUriProperties.builder()
-				.uri(SSH_URI)
-				.ignoreLocalSshSettings(true)
-				.privateKey("invalid_key")
-				.hostKey("some_host_key")
-				.hostKeyAlgorithm("unsupported")
-				.build();
-
-		SshPropertyValidator sshPropertyValidator = new SshPropertyValidator(unsupportedAlgo);
-		sshPropertyValidator.validateSshConfigurationProperties();
-	}
-
-	@Test
-	public void validatorNotRunIfIgnoreLocalSettingsFalse() throws Exception {
-
-		SshUriProperties useLocal = (SshUriProperties.builder()
-				.uri(SSH_URI)
-				.ignoreLocalSshSettings(false)
-				.privateKey("invalid_key")
-				.build());
-
-		SshPropertyValidator sshPropertyValidator = spy(new SshPropertyValidator(useLocal));
-		sshPropertyValidator.validateSshConfigurationProperties();
-		verify(sshPropertyValidator, times(0)).validatePrivateKeyFormat();
-		verify(sshPropertyValidator, times(0)).validateAlgorithmSpecifiedWhenHostKeySet();
-		verify(sshPropertyValidator, times(0)).validatePrivateKeyPresent();
-		verify(sshPropertyValidator, times(0)).validateHostKeyAlgorithmSupported();
-		verify(sshPropertyValidator, times(0)).validateHostKeySpecifiedWhenAlgorithmSet();
-	}
-
-	@Test
-	public void validatorNotRunIfHttpsUri() throws Exception {
-
-		SshUriProperties httpsUri = (SshUriProperties.builder()
-				.uri("https://somerepo.com/team/project.git")
-				.ignoreLocalSshSettings(true)
-				.privateKey("invalid_key")
-				.build());
-
-		SshPropertyValidator sshPropertyValidator = spy(new SshPropertyValidator(httpsUri));
-		sshPropertyValidator.validateSshConfigurationProperties();
-		verify(sshPropertyValidator, times(0)).validatePrivateKeyFormat();
-		verify(sshPropertyValidator, times(0)).validateAlgorithmSpecifiedWhenHostKeySet();
-		verify(sshPropertyValidator, times(0)).validatePrivateKeyPresent();
-		verify(sshPropertyValidator, times(0)).validateHostKeyAlgorithmSupported();
-		verify(sshPropertyValidator, times(0)).validateHostKeySpecifiedWhenAlgorithmSet();
-	}
+//	@Test
+//	public void supportedParametersSuccesful() throws Exception {
+//		SshUriProperties validSettings = SshUriProperties.builder()
+//				.uri(SSH_URI)
+//				.ignoreLocalSshSettings(true)
+//				.privateKey(VALID_PRIVATE_KEY)
+//				.hostKey(VALID_HOST_KEY)
+//				.hostKeyAlgorithm("ssh-rsa")
+//				.build();
+//
+//		SshPropertyValidator sshPropertyValidator = spy(new SshPropertyValidator(validSettings));
+//		sshPropertyValidator.validateSshConfigurationProperties();
+//		verify(sshPropertyValidator, times(1)).validatePrivateKeyFormat();
+//		verify(sshPropertyValidator, times(1)).validateAlgorithmSpecifiedWhenHostKeySet();
+//		verify(sshPropertyValidator, times(1)).validatePrivateKeyPresent();
+//		verify(sshPropertyValidator, times(1)).validateHostKeyAlgorithmSupported();
+//		verify(sshPropertyValidator, times(1)).validateHostKeySpecifiedWhenAlgorithmSet();
+//	}
+//
+//	@Test(expected = IllegalStateException.class)
+//	public void invalidPrivateKeyFails() throws Exception {
+//
+//		SshUriProperties invalidKey = SshUriProperties.builder()
+//				.uri(SSH_URI)
+//				.ignoreLocalSshSettings(true)
+//				.privateKey("invalid_key")
+//				.build();
+//
+//		SshPropertyValidator sshPropertyValidator = new SshPropertyValidator(invalidKey);
+//		sshPropertyValidator.validateSshConfigurationProperties();
+//
+//	}
+//
+//	@Test(expected = IllegalStateException.class)
+//	public void missingPrivateKeyFails() throws Exception {
+//
+//		SshUriProperties missingKey = SshUriProperties.builder()
+//				.uri(SSH_URI)
+//				.ignoreLocalSshSettings(true)
+//				.build();
+//
+//		SshPropertyValidator sshPropertyValidator = new SshPropertyValidator(missingKey);
+//		sshPropertyValidator.validateSshConfigurationProperties();
+//	}
+//
+//	@Test(expected = IllegalStateException.class)
+//	public void hostKeyWithMissingAlgoFails() throws Exception {
+//
+//		SshUriProperties missingAlgo = SshUriProperties.builder()
+//				.uri(SSH_URI)
+//				.ignoreLocalSshSettings(true)
+//				.privateKey("invalid_key")
+//				.hostKey("some_host")
+//				.build();
+//
+//		SshPropertyValidator sshPropertyValidator = new SshPropertyValidator(missingAlgo);
+//		sshPropertyValidator.validateSshConfigurationProperties();
+//	}
+//
+//	@Test(expected = IllegalStateException.class)
+//	public void algoWithMissingHostKeyFails() throws Exception {
+//
+//		SshUriProperties missingHostKey = SshUriProperties.builder()
+//				.uri(SSH_URI)
+//				.ignoreLocalSshSettings(true)
+//				.privateKey("invalid_key")
+//				.hostKeyAlgorithm("some_host_algo")
+//				.build();
+//
+//		SshPropertyValidator sshPropertyValidator = new SshPropertyValidator(missingHostKey);
+//		sshPropertyValidator.validateSshConfigurationProperties();
+//	}
+//
+//	@Test(expected = IllegalStateException.class)
+//	public void unsupportedAlgoFails() throws Exception {
+//
+//		SshUriProperties unsupportedAlgo = SshUriProperties.builder()
+//				.uri(SSH_URI)
+//				.ignoreLocalSshSettings(true)
+//				.privateKey("invalid_key")
+//				.hostKey("some_host_key")
+//				.hostKeyAlgorithm("unsupported")
+//				.build();
+//
+//		SshPropertyValidator sshPropertyValidator = new SshPropertyValidator(unsupportedAlgo);
+//		sshPropertyValidator.validateSshConfigurationProperties();
+//	}
+//
+//	@Test
+//	public void validatorNotRunIfIgnoreLocalSettingsFalse() throws Exception {
+//
+//		SshUriProperties useLocal = (SshUriProperties.builder()
+//				.uri(SSH_URI)
+//				.ignoreLocalSshSettings(false)
+//				.privateKey("invalid_key")
+//				.build());
+//
+//		SshPropertyValidator sshPropertyValidator = spy(new SshPropertyValidator(useLocal));
+//		sshPropertyValidator.validateSshConfigurationProperties();
+//		verify(sshPropertyValidator, times(0)).validatePrivateKeyFormat();
+//		verify(sshPropertyValidator, times(0)).validateAlgorithmSpecifiedWhenHostKeySet();
+//		verify(sshPropertyValidator, times(0)).validatePrivateKeyPresent();
+//		verify(sshPropertyValidator, times(0)).validateHostKeyAlgorithmSupported();
+//		verify(sshPropertyValidator, times(0)).validateHostKeySpecifiedWhenAlgorithmSet();
+//	}
+//
+//	@Test
+//	public void validatorNotRunIfHttpsUri() throws Exception {
+//
+//		SshUriProperties httpsUri = (SshUriProperties.builder()
+//				.uri("https://somerepo.com/team/project.git")
+//				.ignoreLocalSshSettings(true)
+//				.privateKey("invalid_key")
+//				.build());
+//
+//		SshPropertyValidator sshPropertyValidator = spy(new SshPropertyValidator(httpsUri));
+//		sshPropertyValidator.validateSshConfigurationProperties();
+//		verify(sshPropertyValidator, times(0)).validatePrivateKeyFormat();
+//		verify(sshPropertyValidator, times(0)).validateAlgorithmSpecifiedWhenHostKeySet();
+//		verify(sshPropertyValidator, times(0)).validatePrivateKeyPresent();
+//		verify(sshPropertyValidator, times(0)).validateHostKeyAlgorithmSupported();
+//		verify(sshPropertyValidator, times(0)).validateHostKeySpecifiedWhenAlgorithmSet();
+//	}
 }
