@@ -20,6 +20,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.transport.*;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.config.server.ssh.PropertyBasedSshSessionFactory;
@@ -64,10 +65,12 @@ public class TransportConfiguration {
 
 		@Override
 		public void configure(Transport transport) {
-			SshTransport sshTransport = (SshTransport) transport;
-			sshTransport.setSshSessionFactory(
-					new PropertyBasedSshSessionFactory(
-							new SshUriPropertyProcessor(sshUriProperties).getSshKeysByHostname(), new JSch()));
+			if (transport instanceof SshTransport) {
+				SshTransport sshTransport = (SshTransport) transport;
+				sshTransport.setSshSessionFactory(
+						new PropertyBasedSshSessionFactory(
+								new SshUriPropertyProcessor(sshUriProperties).getSshKeysByHostname(), new JSch()));
+			}
 		}
 	}
 
