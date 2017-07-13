@@ -55,7 +55,7 @@ public class PropertyBasedSshSessionFactory extends JschConfigSessionFactory {
 			session.setConfig(SERVER_HOST_KEY, hostKeyAlgorithm);
 		}
 		if (sshProperties.getHostKey() == null || !sshProperties.isStrictHostKeyChecking()) {
-				session.setConfig(STRICT_HOST_KEY_CHECKING, NO_OPTION);
+			session.setConfig(STRICT_HOST_KEY_CHECKING, NO_OPTION);
 		} else {
 			session.setConfig(STRICT_HOST_KEY_CHECKING, YES_OPTION);
 		}
