@@ -44,7 +44,9 @@ public class HostKeyAlgoSupportedValidator implements ConstraintValidator<HostKe
 			"ssh-dss","ssh-rsa","ecdsa-sha2-nistp256","ecdsa-sha2-nistp384","ecdsa-sha2-nistp521"));
 
 	@Override
-	public void initialize(HostKeyAlgoSupported constrainAnnotation) {}
+	public void initialize(HostKeyAlgoSupported constrainAnnotation) {
+		//No special initialization of validator required
+	}
 
 	@Override
 	public boolean isValid(SshUriProperties sshUriProperties, ConstraintValidatorContext context) {

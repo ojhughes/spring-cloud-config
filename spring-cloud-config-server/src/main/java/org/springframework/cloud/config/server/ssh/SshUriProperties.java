@@ -41,7 +41,7 @@ public class SshUriProperties {
 
 	private Map<String, SshUriProperties> repos = new HashMap<>();
 
-	public SshUriProperties(String uri, String hostKeyAlgorithm, String hostKey, String privateKey, String username, String password, boolean ignoreLocalSshSettings, boolean strictHostKeyChecking, Map<String, SshUriProperties> repos) {
+	public SshUriProperties(String uri, String hostKeyAlgorithm, String hostKey, String privateKey, boolean ignoreLocalSshSettings, boolean strictHostKeyChecking, Map<String, SshUriProperties> repos) {
 		this.uri = uri;
 		this.hostKeyAlgorithm = hostKeyAlgorithm;
 		this.hostKey = hostKey;
@@ -127,8 +127,6 @@ public class SshUriProperties {
 		private String hostKeyAlgorithm;
 		private String hostKey;
 		private String privateKey;
-		private String username;
-		private String password;
 		private boolean ignoreLocalSshSettings;
 		private boolean strictHostKeyChecking = true;
 		private Map<String, SshUriProperties> repos;
@@ -156,16 +154,6 @@ public class SshUriProperties {
 			return this;
 		}
 
-		public SshUriProperties.SshUriPropertiesBuilder username(String username) {
-			this.username = username;
-			return this;
-		}
-
-		public SshUriProperties.SshUriPropertiesBuilder password(String password) {
-			this.password = password;
-			return this;
-		}
-
 		public SshUriProperties.SshUriPropertiesBuilder ignoreLocalSshSettings(boolean ignoreLocalSshSettings) {
 			this.ignoreLocalSshSettings = ignoreLocalSshSettings;
 			return this;
@@ -182,11 +170,11 @@ public class SshUriProperties {
 		}
 
 		public SshUriProperties build() {
-			return new SshUriProperties(uri, hostKeyAlgorithm, hostKey, privateKey, username, password, ignoreLocalSshSettings, strictHostKeyChecking, repos);
+			return new SshUriProperties(uri, hostKeyAlgorithm, hostKey, privateKey, ignoreLocalSshSettings, strictHostKeyChecking, repos);
 		}
 
 		public String toString() {
-			return "org.springframework.cloud.config.server.ssh.SshUriProperties.SshUriPropertiesBuilder(uri=" + this.uri + "hostKeyAlgorithm=" + this.hostKeyAlgorithm + ", hostKey=" + this.hostKey + ", privateKey=" + this.privateKey + ", username=" + this.username + ", password=" + this.password + ", ignoreLocalSshSettings=" + this.ignoreLocalSshSettings + ", strictHostKeyChecking=" + this.strictHostKeyChecking + ", repos=" + this.repos + ")";
+			return "org.springframework.cloud.config.server.ssh.SshUriProperties.SshUriPropertiesBuilder(uri=" + this.uri + "hostKeyAlgorithm=" + this.hostKeyAlgorithm + ", hostKey=" + this.hostKey + ", privateKey=" + this.privateKey + ", ignoreLocalSshSettings=" + this.ignoreLocalSshSettings + ", strictHostKeyChecking=" + this.strictHostKeyChecking + ", repos=" + this.repos + ")";
 		}
 	}
 }

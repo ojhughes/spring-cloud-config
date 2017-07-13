@@ -41,7 +41,9 @@ public class HostKeyAndAlgoBothExistValidator implements ConstraintValidator<Hos
 	private final SshPropertyValidator sshPropertyValidator = new SshPropertyValidator();
 
 	@Override
-	public void initialize(HostKeyAndAlgoBothExist constrainAnnotation) {}
+	public void initialize(HostKeyAndAlgoBothExist constrainAnnotation) {
+		//No special initialization of validator required
+	}
 
 	@Override
 	public boolean isValid(SshUriProperties sshUriProperties, ConstraintValidatorContext context) {

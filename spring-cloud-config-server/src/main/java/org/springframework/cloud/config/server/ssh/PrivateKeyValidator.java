@@ -44,7 +44,9 @@ public class PrivateKeyValidator implements ConstraintValidator<PrivateKeyIsVali
 	private final SshPropertyValidator sshPropertyValidator = new SshPropertyValidator();
 
 	@Override
-	public void initialize(PrivateKeyIsValid constrainAnnotation) {}
+	public void initialize(PrivateKeyIsValid constrainAnnotation) {
+		//No special initialization of validator required
+	}
 
 	@Override
 	public boolean isValid(SshUriProperties sshUriProperties, ConstraintValidatorContext context) {

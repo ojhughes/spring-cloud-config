@@ -18,13 +18,9 @@ package org.springframework.cloud.config.server.ssh;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import com.jcraft.jsch.JSch;
 import org.eclipse.jgit.transport.URIish;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,11 +37,7 @@ import static org.springframework.util.StringUtils.hasText;
 @EnableConfigurationProperties(SshUriProperties.class)
 public class SshPropertyValidator {
 
-	private static final Set<String> VALID_HOST_KEY_ALGORITHMS = new LinkedHashSet<>(Arrays.asList(
-			"ssh-dss","ssh-rsa","ecdsa-sha2-nistp256","ecdsa-sha2-nistp384","ecdsa-sha2-nistp521"));
-	private static final String GIT_PROPERTY_PREFIX = "spring.cloud.config.server.git.";
-
-	static boolean isSshUri(Object uri) {
+	protected static boolean isSshUri(Object uri) {
 		if(uri != null) {
 			try {
 				URIish urIish = new URIish(uri.toString());
