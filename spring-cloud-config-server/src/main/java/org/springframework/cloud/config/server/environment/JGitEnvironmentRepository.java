@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.jcraft.jsch.Session;
+
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
@@ -49,14 +51,13 @@ import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.TagOpt;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.util.FileUtils;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cloud.config.server.support.PassphraseCredentialsProvider;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.UrlResource;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-
-import com.jcraft.jsch.Session;
 
 import static org.springframework.util.StringUtils.hasText;
 
@@ -80,8 +81,6 @@ public class JGitEnvironmentRepository extends AbstractScmEnvironmentRepository
 	 * 5 seconds.
 	 */
 	private int timeout = 5;
-
-	private boolean initialized;
 
 	/**
 	 * Flag to indicate that the repository should be cloned on startup (not on demand).
@@ -108,6 +107,8 @@ public class JGitEnvironmentRepository extends AbstractScmEnvironmentRepository
 	 * changes and take from remote repository.
 	 */
 	private boolean forcePull;
+
+	private boolean initialized;
 
 	public JGitEnvironmentRepository(ConfigurableEnvironment environment) {
 		super(environment);
@@ -187,7 +188,6 @@ public class JGitEnvironmentRepository extends AbstractScmEnvironmentRepository
 	 * Get the working directory ready.
 	 */
 	public String refresh(String label) {
-		initialize();
 		Git git = null;
 		try {
 			git = createGitClient();
