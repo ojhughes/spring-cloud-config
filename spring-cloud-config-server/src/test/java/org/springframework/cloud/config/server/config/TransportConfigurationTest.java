@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.config.server.config;
 
+import com.jcraft.jsch.JSch;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.junit.Test;
 import org.springframework.cloud.config.server.ssh.SshUriProperties;
@@ -34,7 +35,7 @@ public class TransportConfigurationTest {
 				.ignoreLocalSshSettings(true)
 				.build();
 		TransportConfiguration transportConfiguration = new TransportConfiguration();
-		TransportConfigCallback transportConfigCallback = transportConfiguration.propertiesBasedSshTransportCallback(ignoreLocalSettings);
+		TransportConfigCallback transportConfigCallback = transportConfiguration.propertiesBasedSshTransportCallback(ignoreLocalSettings, new JSch());
 		assertThat(transportConfigCallback, is(instanceOf(TransportConfiguration.PropertiesBasedSshTransportConfigCallback.class)));
 	}
 
@@ -46,7 +47,7 @@ public class TransportConfigurationTest {
 				.build();
 
 		TransportConfiguration transportConfiguration = new TransportConfiguration();
-		TransportConfigCallback transportConfigCallback = transportConfiguration.propertiesBasedSshTransportCallback(dontIgnoreLocalSettings);
+		TransportConfigCallback transportConfigCallback = transportConfiguration.propertiesBasedSshTransportCallback(dontIgnoreLocalSettings, new JSch());
 		assertThat(transportConfigCallback, is(instanceOf(TransportConfiguration.FileBasedSshTransportConfigCallback.class)));
 
 	}

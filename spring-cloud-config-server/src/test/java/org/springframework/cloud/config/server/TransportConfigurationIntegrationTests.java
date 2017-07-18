@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.config.server;
 
+import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.transport.JschConfigSessionFactory;
@@ -27,6 +28,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.cloud.config.server.config.TransportConfiguration;
 import org.springframework.cloud.config.server.environment.MultipleJGitEnvironmentRepository;
 import org.springframework.cloud.config.server.ssh.SshPropertyValidator;
@@ -41,6 +43,7 @@ import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -48,6 +51,20 @@ import static org.mockito.Mockito.verify;
  * @author Ollie Hughes
  */
 public class TransportConfigurationIntegrationTests {
+
+	private static void callJgitFindOne(MultipleJGitEnvironmentRepository jGitEnvironmentRepository) {
+		String uri = "git+ssh://git@somegitserver/somegitrepo";
+		SshSessionFactory.setInstance(null);
+		jGitEnvironmentRepository.setUri(uri);
+		jGitEnvironmentRepository.setBasedir(new File("./mybasedir"));
+		assertTrue(jGitEnvironmentRepository.isStrictHostKeyChecking());
+		jGitEnvironmentRepository.setCloneOnStart(true);
+		try {
+			// this will throw but we don't care about connecting.
+			jGitEnvironmentRepository.afterPropertiesSet();
+		} catch (Exception ignored) {
+		}
+	}
 
 	@RunWith(SpringRunner.class)
 	@SpringBootTest(classes = {ConfigServerApplication.class, TransportConfiguration.class, SshPropertyValidator.class},
@@ -60,10 +77,24 @@ public class TransportConfigurationIntegrationTests {
 		@Autowired
 		private MultipleJGitEnvironmentRepository jGitEnvironmentRepository;
 
+		@SpyBean
+		private SshUriProperties sshUriProperties;
+
+		@SpyBean
+		JSch jSch;
+
 		@Test
 		public void propertyBasedTransportCallbackIsConfigured() throws Exception {
 			TransportConfigCallback transportConfigCallback = jGitEnvironmentRepository.getTransportConfigCallback();
 			assertThat(transportConfigCallback, is(instanceOf(TransportConfiguration.PropertiesBasedSshTransportConfigCallback.class)));
+		}
+
+		@Test
+		public void callbackIsTriggered() throws Exception {
+			TransportConfigurationIntegrationTests.callJgitFindOne(jGitEnvironmentRepository);
+			verify(sshUriProperties, times(0)).isStrictHostKeyChecking();
+			verify(sshUriProperties, times(1)).get();
+
 		}
 	}
 
@@ -130,6 +161,9 @@ public class TransportConfigurationIntegrationTests {
 		@Autowired
 		private MultipleJGitEnvironmentRepository jGitEnvironmentRepository;
 
+		@SpyBean
+		private SshUriProperties sshUriProperties;
+
 		@Test
 		public void fileBasedTransportCallbackIsConfigured() throws Exception {
 			TransportConfigCallback transportConfigCallback = jGitEnvironmentRepository.getTransportConfigCallback();
@@ -149,22 +183,23 @@ public class TransportConfigurationIntegrationTests {
 				// this will throw but we don't care about connecting.
 				jGitEnvironmentRepository.afterPropertiesSet();
 			} catch (Exception e) {
-				final OpenSshConfig.Host hc = OpenSshConfig.get(FS.detect()).lookup("github.com");
-				JschConfigSessionFactory factory = (JschConfigSessionFactory) SshSessionFactory.getInstance();
-				// There's no public method that can be used to inspect the ssh
-				// configuration, so we'll reflect
-				// the configure method to allow us to check that the config
-				// property is set as expected.
-				Method configure = factory.getClass().getDeclaredMethod("configure", OpenSshConfig.Host.class,
-						Session.class);
-				configure.setAccessible(true);
-				Session session = mock(Session.class);
-				ArgumentCaptor<String> keyCaptor = ArgumentCaptor.forClass(String.class);
-				ArgumentCaptor<String> valueCaptor = ArgumentCaptor.forClass(String.class);
-				configure.invoke(factory, hc, session);
-				verify(session).setConfig(keyCaptor.capture(), valueCaptor.capture());
-				configure.setAccessible(false);
-				assertTrue("yes".equals(valueCaptor.getValue()));
+//				final OpenSshConfig.Host hc = OpenSshConfig.get(FS.detect()).lookup("github.com");
+//				JschConfigSessionFactory factory = (JschConfigSessionFactory) SshSessionFactory.getInstance();
+//				// There's no public method that can be used to inspect the ssh
+//				// configuration, so we'll reflect
+//				// the configure method to allow us to check that the config
+//				// property is set as expected.
+//				Method configure = factory.getClass().getDeclaredMethod("configure", OpenSshConfig.Host.class,
+//						Session.class);
+//				configure.setAccessible(true);
+//				Session session = mock(Session.class);
+//				ArgumentCaptor<String> keyCaptor = ArgumentCaptor.forClass(String.class);
+//				ArgumentCaptor<String> valueCaptor = ArgumentCaptor.forClass(String.class);
+//				configure.invoke(factory, hc, session);
+//				verify(session).setConfig(keyCaptor.capture(), valueCaptor.capture());
+//				configure.setAccessible(false);
+//				assertTrue("yes".equals(valueCaptor.getValue()));
+				verify(sshUriProperties, times(1)).isStrictHostKeyChecking();
 			}
 		}
 	}

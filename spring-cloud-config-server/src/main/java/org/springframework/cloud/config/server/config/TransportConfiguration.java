@@ -37,13 +37,21 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(SshUriProperties.class)
 public class TransportConfiguration {
 
+	/**
+	 * Expose JSch for easier testing
+	 */
+	@ConditionalOnMissingBean(JSch.class)
+	@Bean
+	public JSch createJSch() {
+		return new JSch();
+	}
+
 	@ConditionalOnMissingBean(TransportConfigCallback.class)
 	@Bean
-	public TransportConfigCallback propertiesBasedSshTransportCallback(final SshUriProperties sshUriProperties) {
-		if(sshUriProperties.isIgnoreLocalSshSettings()) {
-			return new PropertiesBasedSshTransportConfigCallback(sshUriProperties);
-		}
-		else return new FileBasedSshTransportConfigCallback(sshUriProperties);
+	public TransportConfigCallback propertiesBasedSshTransportCallback(final SshUriProperties sshUriProperties, JSch jSch) {
+		if (sshUriProperties.isIgnoreLocalSshSettings()) {
+			return new PropertiesBasedSshTransportConfigCallback(sshUriProperties, jSch);
+		} else return new FileBasedSshTransportConfigCallback(sshUriProperties);
 	}
 
 	/**
@@ -53,9 +61,11 @@ public class TransportConfiguration {
 	public static class PropertiesBasedSshTransportConfigCallback implements TransportConfigCallback {
 
 		private SshUriProperties sshUriProperties;
+		private JSch jSch;
 
-		public PropertiesBasedSshTransportConfigCallback(SshUriProperties sshUriProperties) {
+		public PropertiesBasedSshTransportConfigCallback(SshUriProperties sshUriProperties, JSch jSch) {
 			this.sshUriProperties = sshUriProperties;
+			this.jSch = jSch;
 		}
 
 		public SshUriProperties getSshUriProperties() {
@@ -68,7 +78,7 @@ public class TransportConfiguration {
 				SshTransport sshTransport = (SshTransport) transport;
 				sshTransport.setSshSessionFactory(
 						new PropertyBasedSshSessionFactory(
-								new SshUriPropertyProcessor(sshUriProperties).getSshKeysByHostname(), new JSch()));
+								new SshUriPropertyProcessor(sshUriProperties).getSshKeysByHostname(), jSch));
 			}
 		}
 	}
@@ -91,13 +101,16 @@ public class TransportConfiguration {
 
 		@Override
 		public void configure(Transport transport) {
-			SshSessionFactory.setInstance(new JschConfigSessionFactory() {
-				@Override
-				protected void configure(OpenSshConfig.Host hc, Session session) {
-					session.setConfig("StrictHostKeyChecking",
-							sshUriProperties.isStrictHostKeyChecking() ? "yes" : "no");
-				}
-			});
+			if (transport instanceof SshTransport) {
+				SshTransport sshTransport = (SshTransport) transport;
+				sshTransport.setSshSessionFactory(new JschConfigSessionFactory() {
+					@Override
+					protected void configure(OpenSshConfig.Host hc, Session session) {
+						session.setConfig("StrictHostKeyChecking",
+								sshUriProperties.isStrictHostKeyChecking() ? "yes" : "no");
+					}
+				});
+			}
 		}
 	}
 }
