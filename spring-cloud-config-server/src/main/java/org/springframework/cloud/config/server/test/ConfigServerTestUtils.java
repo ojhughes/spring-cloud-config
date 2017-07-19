@@ -65,6 +65,7 @@ public class ConfigServerTestUtils {
 			repoPath = repoPath + "/";
 		}
 		File source = new File(baseDir + "src/test/resources" + repoPath);
+		FileSystemUtils.deleteRecursively(new File(buildDir + repoPath));
 		FileSystemUtils.copyRecursively(source, new File(buildDir + repoPath));
 		File dotGit = new File(buildDir + repoPath + ".git");
 		File git = new File(buildDir + repoPath + "git");

@@ -18,6 +18,7 @@ package org.springframework.cloud.config.server.config;
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.jgit.api.TransportConfigCallback;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -115,8 +116,7 @@ class NativeRepositoryConfiguration {
 
 @Configuration
 @Profile("git")
-class GitRepositoryConfiguration extends DefaultRepositoryConfiguration {
-}
+class GitRepositoryConfiguration extends DefaultRepositoryConfiguration {}
 
 @Configuration
 @Profile("subversion")
@@ -142,8 +142,7 @@ class SvnRepositoryConfiguration {
 @Profile("vault")
 class VaultRepositoryConfiguration {
 	@Bean
-	public VaultEnvironmentRepository vaultEnvironmentRepository(
-			HttpServletRequest request, EnvironmentWatch watch) {
+	public VaultEnvironmentRepository vaultEnvironmentRepository(HttpServletRequest request, EnvironmentWatch watch) {
 		return new VaultEnvironmentRepository(request, watch, new RestTemplate());
 	}
 }
