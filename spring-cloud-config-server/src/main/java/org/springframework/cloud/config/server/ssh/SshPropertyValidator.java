@@ -16,15 +16,14 @@
 
 package org.springframework.cloud.config.server.ssh;
 
+import org.eclipse.jgit.transport.URIish;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.stereotype.Component;
+
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.eclipse.jgit.transport.URIish;
-
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import static org.springframework.util.StringUtils.hasText;
 
@@ -58,7 +57,7 @@ public class SshPropertyValidator {
 	protected List<SshUriProperties> extractRepoProperties(SshUriProperties sshUriProperties) {
 		List<SshUriProperties> allRepoProperties = new ArrayList<>();
 		allRepoProperties.add(sshUriProperties);
-		Map<String, SshUriProperties> repos = sshUriProperties.getRepos();
+		Map<String, SshUriProperties.SshUriNestedRepoProperties> repos = sshUriProperties.getRepos();
 		if (repos != null) {
 			allRepoProperties.addAll(repos.values());
 		}

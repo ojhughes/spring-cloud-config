@@ -16,11 +16,11 @@
 package org.springframework.cloud.config.server.ssh;
 
 
+import org.eclipse.jgit.transport.URIish;
+
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.eclipse.jgit.transport.URIish;
 
 import static org.springframework.cloud.config.server.ssh.SshPropertyValidator.isSshUri;
 
@@ -47,7 +47,7 @@ public class SshUriPropertyProcessor {
 		if (isSshUri(parentUri) && getHostname(parentUri) != null) {
 			sshUriPropertyMap.put(getHostname(parentUri), uriProperties);
 		}
-		Map<String, SshUriProperties> repos = uriProperties.getRepos();
+		Map<String, SshUriProperties.SshUriNestedRepoProperties> repos = uriProperties.getRepos();
 		if(repos != null) {
 			for (SshUriProperties repoProperties : repos.values()) {
 				String repoUri = repoProperties.getUri();

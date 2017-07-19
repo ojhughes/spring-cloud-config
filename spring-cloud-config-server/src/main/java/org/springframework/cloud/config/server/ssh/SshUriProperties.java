@@ -15,11 +15,11 @@
  */
 package org.springframework.cloud.config.server.ssh;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Data container for property based SSH config
@@ -39,9 +39,9 @@ public class SshUriProperties {
 	private boolean ignoreLocalSshSettings;
 	private boolean strictHostKeyChecking = true;
 
-	private Map<String, SshUriProperties> repos = new LinkedHashMap<>();
+	private Map<String, SshUriProperties.SshUriNestedRepoProperties> repos = new LinkedHashMap<>();
 
-	public SshUriProperties(String uri, String hostKeyAlgorithm, String hostKey, String privateKey, boolean ignoreLocalSshSettings, boolean strictHostKeyChecking, Map<String, SshUriProperties> repos) {
+	public SshUriProperties(String uri, String hostKeyAlgorithm, String hostKey, String privateKey, boolean ignoreLocalSshSettings, boolean strictHostKeyChecking, Map<String, SshUriNestedRepoProperties> repos) {
 		this.uri = uri;
 		this.hostKeyAlgorithm = hostKeyAlgorithm;
 		this.hostKey = hostKey;
@@ -82,7 +82,7 @@ public class SshUriProperties {
 		return this.strictHostKeyChecking;
 	}
 
-	public Map<String, SshUriProperties> getRepos() {
+	public Map<String, SshUriProperties.SshUriNestedRepoProperties> getRepos() {
 		return this.repos;
 	}
 
@@ -110,7 +110,7 @@ public class SshUriProperties {
 		this.strictHostKeyChecking = strictHostKeyChecking;
 	}
 
-	public void addRepo(String repoName, SshUriProperties properties) {
+	public void addRepo(String repoName, SshUriProperties.SshUriNestedRepoProperties properties) {
 		this.repos.put(repoName, properties);
 	}
 
@@ -125,7 +125,7 @@ public class SshUriProperties {
 		private String privateKey;
 		private boolean ignoreLocalSshSettings;
 		private boolean strictHostKeyChecking = true;
-		private Map<String, SshUriProperties> repos = new LinkedHashMap<>();
+		private Map<String, SshUriProperties.SshUriNestedRepoProperties> repos = new LinkedHashMap<>();
 
 		SshUriPropertiesBuilder() {
 		}
@@ -160,7 +160,7 @@ public class SshUriProperties {
 			return this;
 		}
 
-		public SshUriProperties.SshUriPropertiesBuilder repos(Map<String, SshUriProperties> repos) {
+		public SshUriProperties.SshUriPropertiesBuilder repos(Map<String, SshUriProperties.SshUriNestedRepoProperties> repos) {
 			this.repos = repos;
 			return this;
 		}
@@ -169,8 +169,22 @@ public class SshUriProperties {
 			return new SshUriProperties(uri, hostKeyAlgorithm, hostKey, privateKey, ignoreLocalSshSettings, strictHostKeyChecking, repos);
 		}
 
+		public SshUriProperties buildAsNestedRepo() {
+			return new SshUriProperties.SshUriNestedRepoProperties(uri, hostKeyAlgorithm, hostKey, privateKey, ignoreLocalSshSettings, strictHostKeyChecking, repos);
+		}
 		public String toString() {
 			return "org.springframework.cloud.config.server.ssh.SshUriProperties.SshUriPropertiesBuilder(uri=" + this.uri + "hostKeyAlgorithm=" + this.hostKeyAlgorithm + ", hostKey=" + this.hostKey + ", privateKey=" + this.privateKey + ", ignoreLocalSshSettings=" + this.ignoreLocalSshSettings + ", strictHostKeyChecking=" + this.strictHostKeyChecking + ", repos=" + this.repos + ")";
+		}
+	}
+
+	/**
+	 * Differentiate between sets of properties that are defined in nested Git repos.
+	 * This is to prevent boot from
+	 */
+	public static class SshUriNestedRepoProperties extends SshUriProperties {
+
+		public SshUriNestedRepoProperties(String uri, String hostKeyAlgorithm, String hostKey, String privateKey, boolean ignoreLocalSshSettings, boolean strictHostKeyChecking, Map<String, SshUriNestedRepoProperties> repos) {
+			super(uri, hostKeyAlgorithm, hostKey, privateKey, ignoreLocalSshSettings, strictHostKeyChecking, repos);
 		}
 	}
 }

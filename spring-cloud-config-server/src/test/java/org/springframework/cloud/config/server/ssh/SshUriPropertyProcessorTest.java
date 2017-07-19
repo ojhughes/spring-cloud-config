@@ -16,18 +16,14 @@
 
 package org.springframework.cloud.config.server.ssh;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
-
-import java.util.Map;
-
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.junit.After;
 import org.junit.Test;
+
+import java.util.Map;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * Unit tests for property based SSH config processor
@@ -70,11 +66,11 @@ public class SshUriPropertyProcessorTest {
 		addRepoProperties(sshUriProperties, SshUriProperties.builder()
 				.uri(URI2)
 				.privateKey(PRIVATE_KEY2)
-				.build(), "repo2");
+				.buildAsNestedRepo(), "repo2");
 		addRepoProperties(sshUriProperties, SshUriProperties.builder()
 				.uri(URI3)
 				.privateKey(PRIVATE_KEY3)
-				.build(), "repo3");
+				.buildAsNestedRepo(), "repo3");
 
 		SshUriPropertyProcessor sshUriPropertyProcessor = new SshUriPropertyProcessor(sshUriProperties);
 
@@ -107,7 +103,7 @@ public class SshUriPropertyProcessorTest {
 				.privateKey(PRIVATE_KEY1)
 				.hostKey(HOST_KEY1)
 				.hostKeyAlgorithm(ALGO1)
-				.build(), "repo2");
+				.buildAsNestedRepo(), "repo2");
 
 		SshUriPropertyProcessor sshUriPropertyProcessor = new SshUriPropertyProcessor(sshUriProperties);
 		Map<String, SshUriProperties> sshKeysByHostname = sshUriPropertyProcessor.getSshKeysByHostname();
@@ -150,7 +146,7 @@ public class SshUriPropertyProcessorTest {
 	}
 
 	private void addRepoProperties(SshUriProperties mainRepoProperties, SshUriProperties repoProperties, String repoName) {
-		mainRepoProperties.addRepo(repoName, repoProperties);
+		mainRepoProperties.addRepo(repoName, (SshUriProperties.SshUriNestedRepoProperties) repoProperties);
 	}
 
 	private void assertMainRepo(SshUriProperties sshKey) {
